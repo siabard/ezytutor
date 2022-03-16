@@ -1,0 +1,18 @@
+[package]
+name = "ezytutors"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-rt = "1.1.1"
+actix-web = "3.3.3"
+sqlx = {version = "0.5.10", default_features = false, features = ["postgres", "runtime-tokio", "macros", "chrono"]}
+dotenv = "0.15.0"
+serde = {version = "1.0.136", features = ["derive"]}
+chrono = {version = "0.4.19", features = ["serde"]}
+openssl = {version = "0.10" , features = ["vendored"]}
+
+[workspace]
+members=["tutor-nodb", "tutor-db"]
