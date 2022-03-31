@@ -1,6 +1,9 @@
 use crate::errors::EzyTutorError;
 use crate::models::course::*;
-use sqlx::postgres::{PgDone, PgPool};
+use sqlx::{
+    postgres::{PgDone, PgPool},
+    Done,
+};
 
 pub async fn get_courses_for_tutor_db(
     pool: &PgPool,
@@ -61,7 +64,7 @@ pub async fn delete_course_db(
     )
     .execute(pool)
     .await?;
-    Ok(format!("Deleted {:?} record", course_row))
+    Ok(format!("Deleted {:?} record", course_row.rows_affected()))
 }
 
 pub async fn update_course_details_db(

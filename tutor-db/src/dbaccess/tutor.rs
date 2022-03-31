@@ -1,5 +1,5 @@
 use crate::errors::EzyTutorError;
-use crate::models::tutor::{NewTutor, Tutor, UpdateTutor};
+use crate::models::tutor::{NewTutor, Tutor, UpdateTutor, User};
 use sqlx::postgres::PgPool;
 
 pub async fn get_all_tutors_db(pool: &PgPool) -> Result<Vec<Tutor>, EzyTutorError> {
@@ -36,6 +36,7 @@ pub async fn get_tutor_details_db(pool: &PgPool, tutor_id: i32) -> Result<Tutor,
 }
 
 pub async fn post_new_tutor_db(pool: &PgPool, new_tutor: NewTutor) -> Result<Tutor, EzyTutorError> {
+    dbg!(&new_tutor);
     let tutor_row = sqlx::query!("insert into ezy_tutor (tutor_name, tutor_pic_url, tutor_profile ) values ($1, $2, $3) returning tutor_id, tutor_name, tutor_pic_url, tutor_profile ", new_tutor.tutor_name, new_tutor.tutor_pic_url, new_tutor.tutor_profile).fetch_one(pool).await?;
 
     Ok(Tutor {
@@ -92,4 +93,23 @@ pub async fn delete_tutor_db(pool: &PgPool, tutor_id: i32) -> Result<String, Ezy
         .await?;
 
     Ok(format!("Tutor {:?} is successfully deleted", result))
+}
+
+pub async fn get_user_record(pool: &PgPool, username: String) -> Result<User, EzyTutorError> {
+    let user_row =
+        sqlx::query_as_unchecked!(User, "SELECT * FROM ezy_user WHERE username = $1", username)
+            .fetch_optional(pool)
+            .await?;
+
+    if let Some(user) = user_row {
+        Ok(user)
+    } else {
+        Err(EzyTutorError::NotFound("User name is not found".into()))
+    }
+}
+
+pub async fn post_new_user(pool: &PgPool, new_user: User) -> Result<User, EzyTutorError> {
+    let user_row = sqlx::query_as_unchecked!(User, " insert into ezy_user (username, tutor_id, user_password) values ($1, $2, $3) returning username, tutor_id, user_password ", new_user.username, new_user.tutor_id, new_user.user_password).fetch_one(pool).await?;
+
+    Ok(user_row)
 }

@@ -30,6 +30,7 @@ pub fn tutor_routes(cfg: &mut web::ServiceConfig) {
             .route("", web::post().to(post_new_tutor))
             .route("", web::get().to(get_all_tutors))
             .route("/register", web::get().to(show_register_form))
+            .route("/register", web::post().to(handle_register))
             .route("/{tutor_id}", web::get().to(get_tutor_details))
             .route("/{tutor_id}", web::put().to(update_tutor_details))
             .route("/{tutor_id}", web::delete().to(delete_tutor)),

@@ -17,6 +17,8 @@ pub struct MyErrorResponse {
     error_message: String,
 }
 
+impl std::error::Error for EzyTutorError {}
+
 impl EzyTutorError {
     fn error_response(&self) -> String {
         match self {
@@ -67,7 +69,7 @@ impl error::ResponseError for EzyTutorError {
         match self {
             EzyTutorError::DBError(_msg)
             | EzyTutorError::ActixError(_msg)
-            | EzyTutorError::TeraError(msg) => StatusCode::INTERNAL_SERVER_ERROR,
+            | EzyTutorError::TeraError(_msg) => StatusCode::INTERNAL_SERVER_ERROR,
             EzyTutorError::InvalidInput(_msg) => StatusCode::BAD_REQUEST,
             EzyTutorError::NotFound(_msg) => StatusCode::NOT_FOUND,
         }
